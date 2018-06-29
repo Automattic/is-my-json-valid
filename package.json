@@ -12,10 +12,11 @@
   },
   "devDependencies": {
     "safe-regex": "^1.1.0",
-    "tape": "^2.13.4"
+    "tape": "^2.13.4",
+    "typescript": "^2.9.2"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "test": "tape test/*.js && tsc --noEmit test/typings.ts"
   },
   "repository": {
     "type": "git",
