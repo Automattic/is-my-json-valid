@@ -122,11 +122,11 @@ var compile = function(schema, cache, root, reporter, opts) {
   }
 
   var reversePatterns = {}
-  var patterns = function(p) {
-    if (reversePatterns[p]) return reversePatterns[p]
+  var patterns = function(p, flags = '') {
+    if (reversePatterns[p+flags]) return reversePatterns[p+flags]
     var n = gensym('pattern')
-    scope[n] = new RegExp(p)
-    reversePatterns[p] = n
+    scope[n] = new RegExp(p, flags)
+    reversePatterns[p+flags] = n
     return n
   }
 
@@ -389,7 +389,7 @@ var compile = function(schema, cache, root, reporter, opts) {
     }
 
     if (node.pattern) {
-      var p = patterns(node.pattern)
+      var p = patterns(node.pattern, node.patternFlags || '')
       if (type !== 'string') validate('if (%s) {', types.string(name))
       validate('if (!(%s.test(%s))) {', p, name)
       error('pattern mismatch')
