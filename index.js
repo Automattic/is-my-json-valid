@@ -389,7 +389,7 @@ var compile = function(schema, cache, root, reporter, opts) {
     }
 
     if (node.pattern) {
-      var p = patterns(node.pattern, node.patternFlags || '')
+      var p = patterns(node.pattern, (typeof node.patternFlags === 'string') ? node.patternFlags : '')
       if (type !== 'string') validate('if (%s) {', types.string(name))
       validate('if (!(%s.test(%s))) {', p, name)
       error('pattern mismatch')
