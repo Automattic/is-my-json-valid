@@ -469,3 +469,22 @@ tape('field shows item index in arrays', function(t) {
   t.strictEqual(validate.errors[0].field, 'data.1.1.foo', 'should output the field with specific index of failing item in the error')
   t.end()
 })
+
+tape('patternFlags', function(t) {
+  var validate = validator({
+    type: 'object',
+    properties: {
+      anyFoo: {
+        type: 'string',
+        pattern: "foo",
+        patternFlags: "i",
+      }
+    }
+  })
+
+  t.ok(validate({anyFoo:"foo"}))
+  t.ok(validate({anyFoo:"FOO"}))
+  t.ok(validate({anyFoo:"Foo"}))
+  t.notOk(validate({anyFoo:"bar"}))
+  t.end()
+})
