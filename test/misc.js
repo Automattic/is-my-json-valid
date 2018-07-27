@@ -488,3 +488,18 @@ tape('patternFlags', function(t) {
   t.notOk(validate({anyFoo:"bar"}))
   t.end()
 })
+
+tape('invalid patternFlags', function(t) {
+  [ null, "1", {}, [], 1, "iii" ].map(
+    function (invalidFlags) {
+      var validate = validator({
+        type: 'string',
+        pattern: "foo",
+        patternFlags: invalidFlags,
+      })
+      t.notOk(validate("Foo"), "Should not match with invalid patternFlags: " + JSON.stringify(invalidFlags))
+      t.ok(validate("foo"), "Should ignore invalid patternFlags: " + JSON.stringify(invalidFlags))
+    }
+  )
+  t.end()
+})

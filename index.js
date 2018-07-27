@@ -123,11 +123,18 @@ var compile = function(schema, cache, root, reporter, opts) {
 
   var reversePatterns = {}
   var patterns = function(p, flags = '') {
-    if (reversePatterns[p+flags]) return reversePatterns[p+flags]
-    var n = gensym('pattern')
-    scope[n] = new RegExp(p, flags)
-    reversePatterns[p+flags] = n
-    return n
+    try {
+      // We need any joining character to disambiguate /x/i from /xi/
+      var key = p+','+flags;
+      if (reversePatterns[key]) return reversePatterns[key]
+      var n = gensym('pattern')
+      scope[n] = new RegExp(p, flags)
+      reversePatterns[key] = n
+      return n
+    } catch {
+      // silently ignore invalid flags in the opaque JSON Schema tradition
+      return patterns(p);
+    }
   }
 
   var vars = ['i','j','k','l','m','n','o','p','q','r','s','t','u','v','x','y','z']
@@ -389,7 +396,7 @@ var compile = function(schema, cache, root, reporter, opts) {
     }
 
     if (node.pattern) {
-      var p = patterns(node.pattern, (typeof node.patternFlags === 'string') ? node.patternFlags : '')
+      var p = patterns(node.pattern, node.patternFlags)
       if (type !== 'string') validate('if (%s) {', types.string(name))
       validate('if (!(%s.test(%s))) {', p, name)
       error('pattern mismatch')
